@@ -168,10 +168,10 @@ jobs:
 
       - name: Pack
         shell: bash
-        working-directory: subprojects
+        working-directory: subprojects/Build/wx_cmake_template_core
         run: |
           ls -laR
-          ${{ matrix.config.archiver }} ../${{ matrix.config.artifact }} .
+          ${{ matrix.config.archiver }} ../../../${{ matrix.config.artifact }} .
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
