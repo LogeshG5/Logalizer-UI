@@ -61,17 +61,19 @@ class MainFrame : public wxFrame
 		wxFilePickerCtrl* m_logFilePicker;
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_dropText;
+		wxStaticText* m_staticText31;
 		wxComboBox* m_profileCombo;
 		wxComboBox* m_formatCombo;
 		wxButton* m_generateButton;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void onConfigSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onGenerate( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
 
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Logalizer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MainFrame();
 

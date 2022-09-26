@@ -13,6 +13,7 @@ class MainFrameImpl : public MainFrame {
 
     ~MainFrameImpl();
     virtual void onGenerate(wxCommandEvent& event);
+    virtual void onConfigSelected(wxCommandEvent& event);
     void OnDropFiles(wxDropFilesEvent& event);
     void loadConfigs();
 

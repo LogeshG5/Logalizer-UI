@@ -5,15 +5,15 @@
 #include "MainFrameImpl.h"
 
 class MyApp : public wxApp {
-  public:
-   virtual bool OnInit();
+   public:
+    virtual bool OnInit();
 };
 
 IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-   auto *frame = new MainFrameImpl(nullptr);
-   frame->Show(true);
-   return true;
+    auto *frame = new MainFrameImpl(nullptr, wxID_ANY, "Logalizer");
+    frame->Show(true);
+    return true;
 }

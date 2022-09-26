@@ -36,11 +36,11 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSelectLogSizer;
 	bSelectLogSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_staticTextLogFileTitle = new wxStaticText( m_panelGenerate, wxID_ANY, wxT("Browse Log File"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextLogFileTitle = new wxStaticText( m_panelGenerate, wxID_ANY, wxT("Select a log file"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextLogFileTitle->Wrap( -1 );
 	bSelectLogSizer->Add( m_staticTextLogFileTitle, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_logFilePicker = new wxFilePickerCtrl( m_panelGenerate, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_logFilePicker = new wxFilePickerCtrl( m_panelGenerate, wxID_ANY, wxEmptyString, wxT("Select a log file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	bSelectLogSizer->Add( m_logFilePicker, 0, wxALL|wxEXPAND, 5 );
 
 	m_staticText3 = new wxStaticText( m_panelGenerate, wxID_ANY, wxT("Drag and drop file here"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL );
@@ -55,6 +55,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	wxBoxSizer* bGenerateBtnSizer;
 	bGenerateBtnSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	m_staticText31 = new wxStaticText( m_panelGenerate, wxID_ANY, wxT("Select config"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31->Wrap( -1 );
+	bGenerateBtnSizer->Add( m_staticText31, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_profileCombo = new wxComboBox( m_panelGenerate, wxID_ANY, wxT("Select profile"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	bGenerateBtnSizer->Add( m_profileCombo, 1, wxALL|wxFIXED_MINSIZE, 5 );
@@ -88,12 +92,14 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	m_profileCombo->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( MainFrame::onConfigSelected ), NULL, this );
 	m_generateButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onGenerate ), NULL, this );
 }
 
 MainFrame::~MainFrame()
 {
 	// Disconnect Events
+	m_profileCombo->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( MainFrame::onConfigSelected ), NULL, this );
 	m_generateButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::onGenerate ), NULL, this );
 
 }

@@ -41,6 +41,7 @@ void MainFrameImpl::loadConfigs()
                 profiles_[profile_name] = entry.path().string();
             }
         }
+        m_profileCombo->Append("Browse...");
     }
     catch (std::exception& e) {
         std::cout << e.what();
@@ -98,4 +99,22 @@ void MainFrameImpl::OnDropFiles(wxDropFilesEvent& event)
             m_logFilePicker->SetPath(files[i]);
         }
     }
+}
+
+void MainFrameImpl::onConfigSelected(wxCommandEvent& event)
+{
+    if (m_profileCombo->GetStringSelection() != "Browse...") return;
+
+    wxFileDialog openFileDialog(this, _("Select config file"), "", "", "config files (*.json)|*.json",
+                                wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL) return;  // the user changed idea...
+
+    std::string pathStr = openFileDialog.GetPath().ToStdString();
+    std::string profile_name = fs::path(pathStr).stem().string();
+
+    m_profileCombo->Delete(m_profileCombo->GetCount() - 1);
+    profiles_[profile_name] = pathStr;
+    m_profileCombo->Append(profile_name);
+    m_profileCombo->Append("Browse...");
+    m_profileCombo->SetSelection(m_profileCombo->GetCount() - 2);
 }
