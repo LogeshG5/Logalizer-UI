@@ -60,7 +60,7 @@ void MainFrameImpl::onGenerate(wxCommandEvent& event)
 void MainFrameImpl::executeCmd(const std::string& filePath, const std::string& profilePath)
 {
     const std::string logalizerPath = getLogalizerPath().string();
-    const std::string command = logalizerPath + " -f " + filePath + " -c " + profilePath;
+    const std::string command = logalizerPath + " -f \"" + filePath + "\" -c \"" + profilePath + "\"";
     const char* command_str = command.c_str();
     std::cout << command_str << std::endl;
     if (const int returnval = system(command_str)) {
