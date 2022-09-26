@@ -6,16 +6,18 @@
 #include "ui/ui.h"
 
 class MainFrameImpl : public MainFrame {
-  public:
-   MainFrameImpl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
-                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-                 long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
+   public:
+    MainFrameImpl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                  long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
-   ~MainFrameImpl();
-   virtual void onGenerate(wxCommandEvent& event);
-   void loadConfigs();
+    ~MainFrameImpl();
+    virtual void onGenerate(wxCommandEvent& event);
+    void OnDropFiles(wxDropFilesEvent& event);
+    void loadConfigs();
 
-  private:
-   std::unordered_map<std::string, std::string> profiles_;
-   void executeCmd(const std::string& filePath, const std::string& profilePath);
+   private:
+    std::unordered_map<std::string, std::string> profiles_;
+    void executeCmd(const std::string& filePath, const std::string& profilePath);
+    void setupDragDrop();
 };
