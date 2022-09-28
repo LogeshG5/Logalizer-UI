@@ -35,7 +35,6 @@ void MainFrameImpl::loadProfiles()
         fs::path profile = getExeDir() / "config";
         for (const auto& entry : fs::directory_iterator(profile)) {
             if (entry.path().extension() == ".json") {
-                std::cout << entry.path() << std::endl;
                 std::string profile_name = entry.path().stem().string();
                 m_profileCombo->Append(profile_name);
                 profiles_[profile_name] = entry.path().string();
@@ -97,7 +96,6 @@ void MainFrameImpl::OnDropFiles(wxDropFilesEvent& event)
         for (size_t i = 0; i < filesToProcess; i++) {
             *textCtrl << files[i] << wxT('\n');
             m_logFilePicker->SetPath(files[i]);
-            m_dropText->WriteText(files[i]);
         }
     }
 }
@@ -111,6 +109,11 @@ void MainFrameImpl::onProfileSelected(wxCommandEvent& event)
     if (openFileDialog.ShowModal() == wxID_CANCEL) return;  // the user canceled...
 
     appendProfile(openFileDialog.GetPath());
+}
+
+void MainFrameImpl::onLogFileChanged(wxFileDirPickerEvent& event)
+{
+    m_dropText->SetValue(m_logFilePicker->GetPath());
 }
 
 void MainFrameImpl::setCmdLineArgs(const wxString& file, const wxString& profile)

@@ -8,7 +8,7 @@
 class MyApp : public wxApp {
    public:
     virtual bool OnInit();
-    bool parserCmdLine(wxString& file, wxString& config);
+    bool parserCmdLine(wxString& file, wxString& profile);
 };
 
 IMPLEMENT_APP(MyApp);
@@ -16,14 +16,14 @@ IMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     auto* frame = new MainFrameImpl(nullptr, wxID_ANY, "Logalizer");
-    wxString file, config;
-    parserCmdLine(file, config);
-    frame->setCmdLineArgs(file, config);
+    wxString file, profile;
+    parserCmdLine(file, profile);
+    frame->setCmdLineArgs(file, profile);
     frame->Show(true);
     return true;
 }
 
-bool MyApp::parserCmdLine(wxString& file, wxString& config)
+bool MyApp::parserCmdLine(wxString& file, wxString& profile)
 {
     static const wxCmdLineEntryDesc cmdLineDesc[] = {
         {wxCMD_LINE_SWITCH, "h", "help", "Displays this help", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
@@ -35,6 +35,6 @@ bool MyApp::parserCmdLine(wxString& file, wxString& config)
     parser.SetSwitchChars("-");
     parser.Parse();
     parser.Found("f", &file);
-    parser.Found("c", &config);
+    parser.Found("p", &profile);
     return true;
 }

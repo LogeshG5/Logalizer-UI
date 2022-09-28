@@ -8,74 +8,76 @@
 #pragma once
 
 #include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/string.h>
+#include <wx/bitmap.h>
+#include <wx/button.h>
+#include <wx/colour.h>
+#include <wx/combobox.h>
+#include <wx/filepicker.h>
+#include <wx/font.h>
 #include <wx/frame.h>
 #include <wx/gdicmn.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include <wx/stattext.h>
-#include <wx/filepicker.h>
-#include <wx/textctrl.h>
-#include <wx/sizer.h>
-#include <wx/combobox.h>
-#include <wx/button.h>
-#include <wx/bitmap.h>
-#include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/panel.h>
+#include <wx/image.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/string.h>
+#include <wx/textctrl.h>
+#include <wx/xrc/xmlres.h>
 
 ///////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MyFrame
 ///////////////////////////////////////////////////////////////////////////////
-class MyFrame : public wxFrame
-{
-	private:
+class MyFrame : public wxFrame {
+   private:
+   protected:
+   public:
+    MyFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
+            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 389),
+            long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
-	protected:
-
-	public:
-
-		MyFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,389 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-
-		~MyFrame();
-
+    ~MyFrame();
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
 ///////////////////////////////////////////////////////////////////////////////
-class MainFrame : public wxFrame
-{
-	private:
+class MainFrame : public wxFrame {
+   private:
+   protected:
+    wxNotebook* m_notebook;
+    wxPanel* m_panelGenerate;
+    wxStaticText* m_staticTextLogFileTitle;
+    wxFilePickerCtrl* m_logFilePicker;
+    wxStaticText* m_staticText3;
+    wxTextCtrl* m_dropText;
+    wxStaticText* m_staticText31;
+    wxComboBox* m_profileCombo;
+    wxComboBox* m_formatCombo;
+    wxButton* m_generateButton;
 
-	protected:
-		wxNotebook* m_notebook;
-		wxPanel* m_panelGenerate;
-		wxStaticText* m_staticTextLogFileTitle;
-		wxFilePickerCtrl* m_logFilePicker;
-		wxStaticText* m_staticText3;
-		wxTextCtrl* m_dropText;
-		wxStaticText* m_staticText31;
-		wxComboBox* m_profileCombo;
-		wxComboBox* m_formatCombo;
-		wxButton* m_generateButton;
+    // Virtual event handlers, override them in your derived class
+    virtual void onLogFileChanged(wxFileDirPickerEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void onProfileSelected(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void onGenerate(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
 
-		// Virtual event handlers, override them in your derived class
-		virtual void onProfileSelected( wxCommandEvent& event ) { event.Skip(); }
-		virtual void onGenerate( wxCommandEvent& event ) { event.Skip(); }
+   public:
+    MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Logalizer"),
+              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+              long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
-
-	public:
-
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Logalizer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-
-		~MainFrame();
-
+    ~MainFrame();
 };
-

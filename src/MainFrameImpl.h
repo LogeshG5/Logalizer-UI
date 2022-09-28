@@ -14,6 +14,7 @@ class MainFrameImpl : public MainFrame {
     ~MainFrameImpl();
     virtual void onGenerate(wxCommandEvent& event);
     virtual void onProfileSelected(wxCommandEvent& event);
+    virtual void onLogFileChanged(wxFileDirPickerEvent& event);
     void OnDropFiles(wxDropFilesEvent& event);
     void loadProfiles();
     void setCmdLineArgs(const wxString& file = wxEmptyString, const wxString& config = wxEmptyString);
