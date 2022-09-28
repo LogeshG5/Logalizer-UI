@@ -67,7 +67,7 @@ class MainFrame : public wxFrame
 		wxButton* m_generateButton;
 
 		// Virtual event handlers, override them in your derived class
-		virtual void onConfigSelected( wxCommandEvent& event ) { event.Skip(); }
+		virtual void onProfileSelected( wxCommandEvent& event ) { event.Skip(); }
 		virtual void onGenerate( wxCommandEvent& event ) { event.Skip(); }
 
 

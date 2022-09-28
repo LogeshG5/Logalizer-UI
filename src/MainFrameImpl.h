@@ -13,12 +13,14 @@ class MainFrameImpl : public MainFrame {
 
     ~MainFrameImpl();
     virtual void onGenerate(wxCommandEvent& event);
-    virtual void onConfigSelected(wxCommandEvent& event);
+    virtual void onProfileSelected(wxCommandEvent& event);
     void OnDropFiles(wxDropFilesEvent& event);
-    void loadConfigs();
+    void loadProfiles();
+    void setCmdLineArgs(const wxString& file = wxEmptyString, const wxString& config = wxEmptyString);
 
    private:
     std::unordered_map<std::string, std::string> profiles_;
     void executeCmd(const std::string& filePath, const std::string& profilePath);
     void setupDragDrop();
+    void appendProfile(const wxString& file);
 };

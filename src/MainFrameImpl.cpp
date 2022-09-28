@@ -15,7 +15,7 @@ MainFrameImpl::MainFrameImpl(wxWindow* parent, wxWindowID id, const wxString& ti
                              const wxSize& size, long style)
     : MainFrame(parent, id, title, pos, size, style)
 {
-    loadConfigs();
+    loadProfiles();
     setupDragDrop();
 }
 
@@ -29,11 +29,11 @@ void MainFrameImpl::setupDragDrop()
     m_dropText->Connect(wxEVT_DROP_FILES, wxDropFilesEventHandler(MainFrameImpl::OnDropFiles), NULL, this);
 }
 
-void MainFrameImpl::loadConfigs()
+void MainFrameImpl::loadProfiles()
 {
     try {
-        fs::path config = getExeDir() / "config";
-        for (const auto& entry : fs::directory_iterator(config)) {
+        fs::path profile = getExeDir() / "config";
+        for (const auto& entry : fs::directory_iterator(profile)) {
             if (entry.path().extension() == ".json") {
                 std::cout << entry.path() << std::endl;
                 std::string profile_name = entry.path().stem().string();
@@ -97,24 +97,46 @@ void MainFrameImpl::OnDropFiles(wxDropFilesEvent& event)
         for (size_t i = 0; i < filesToProcess; i++) {
             *textCtrl << files[i] << wxT('\n');
             m_logFilePicker->SetPath(files[i]);
+            m_dropText->WriteText(files[i]);
         }
     }
 }
 
-void MainFrameImpl::onConfigSelected(wxCommandEvent& event)
+void MainFrameImpl::onProfileSelected(wxCommandEvent& event)
 {
     if (m_profileCombo->GetStringSelection() != "Browse...") return;
 
-    wxFileDialog openFileDialog(this, _("Select config file"), "", "", "config files (*.json)|*.json",
+    wxFileDialog openFileDialog(this, _("Select profile"), "", "", "profile (*.json)|*.json",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    if (openFileDialog.ShowModal() == wxID_CANCEL) return;  // the user changed idea...
+    if (openFileDialog.ShowModal() == wxID_CANCEL) return;  // the user canceled...
 
-    std::string pathStr = openFileDialog.GetPath().ToStdString();
-    std::string profile_name = fs::path(pathStr).stem().string();
+    appendProfile(openFileDialog.GetPath());
+}
 
-    m_profileCombo->Delete(m_profileCombo->GetCount() - 1);
-    profiles_[profile_name] = pathStr;
-    m_profileCombo->Append(profile_name);
-    m_profileCombo->Append("Browse...");
-    m_profileCombo->SetSelection(m_profileCombo->GetCount() - 2);
+void MainFrameImpl::setCmdLineArgs(const wxString& file, const wxString& profile)
+{
+    if (!file.IsEmpty()) {
+        m_logFilePicker->SetPath(file);
+        m_dropText->WriteText(file);
+    }
+    if (!profile.IsEmpty()) appendProfile(profile);
+}
+
+void MainFrameImpl::appendProfile(const wxString& file)
+{
+    std::string profile_name = fs::path(file.ToStdString()).stem().string();
+    // check if it is already existing
+    if (profiles_.find(profile_name) == profiles_.end()) {
+        // does not exist
+        // remove Browse... and add this at the end, add Browse... again
+        m_profileCombo->Delete(m_profileCombo->GetCount() - 1);
+        profiles_[profile_name] = file;
+        m_profileCombo->Append(profile_name);
+        m_profileCombo->Append("Browse...");
+        m_profileCombo->SetSelection(m_profileCombo->GetCount() - 2);
+    }
+    else {
+        // This profile already exist, update the path
+        profiles_[profile_name] = file;
+    }
 }
