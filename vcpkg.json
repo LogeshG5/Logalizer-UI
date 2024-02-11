@@ -1,0 +1,8 @@
+{
+  "name": "logalizer-ui",
+  "version-string": "1.0",
+  "dependencies": [
+    "wxwidgets"
+  ],
+  "builtin-baseline": "345ac44ab8d6a16239d3af55df9608bf725e7a48"
+}

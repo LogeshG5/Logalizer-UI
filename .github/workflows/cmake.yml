@@ -1,4 +1,4 @@
-name: Build Logalizer
+name: Build Logalizer-UI
 on: [push, workflow_dispatch]
 
 jobs:
@@ -37,7 +37,8 @@ jobs:
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       - uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: recursive
+          fetch-depth: 0
       - name: "Create directory '${{ env.VCPKG_DEFAULT_BINARY_CACHE }}'"
         run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
         shell: bash
@@ -87,17 +88,20 @@ jobs:
       # Install binaries
       - name: Install Strip
         shell: bash
-        run: cmake --install build/ninja-multi-vcpkg --strip
+        run: |
+          cmake --install build/ninja-multi-vcpkg --strip
+          ls -laR
+
       
       # Pack install directory
       - name: Pack
         shell: bash
-        working-directory: build/ninja-multi-vcpkg/Build/logalizer-ui_core/Release
+        working-directory: build/ninja-multi-vcpkg/src/Release
         run: |
-          cpack --config CPackConfig.cmake
+          # cpack --config CPackConfig.cmake
+          ${{ matrix.archiver }} ../../logalizer_${{ matrix.os }}.7z .
           ls -laR
-          ${{ matrix.archiver }} ../../../logalizer_${{ matrix.os }}.7z .
-          cp ../logalizer_${{ matrix.os }}.7z .
+          # cp ../logalizer_${{ matrix.os }}.7z .
 
       - name: Upload
         uses: actions/upload-artifact@v1
