@@ -1,10 +1,12 @@
 #include "MainFrameImpl.h"
+#include <unistd.h>
 #include <wx/arrstr.h>
 #include <wx/busyinfo.h>
 #include <wx/dir.h>
 #include <wx/textctrl.h>
 #include <wx/wx.h>
 #include <wx/wxprec.h>
+#include <array>
 #include <filesystem>
 #include <iostream>
 #include "platform/application.h"
@@ -56,15 +58,33 @@ void MainFrameImpl::onGenerate(wxCommandEvent& event)
     if (filePath.empty()) wxMessageBox(wxT("Choose input file"));
     executeCmd(filePath, profilePath);
 }
+int MainFrameImpl::execute(const std::string& cmd, std::string& output)
+{
+    const int bufsize = 128;
+    std::array<char, bufsize> buffer;
 
+    auto pipe = popen(cmd.c_str(), "r");
+    if (!pipe) throw std::runtime_error("popen() failed!");
+
+    size_t count;
+    do {
+        if ((count = fread(buffer.data(), 1, bufsize, pipe)) > 0) {
+            output.insert(output.end(), std::begin(buffer), std::next(std::begin(buffer), count));
+        }
+    } while (count > 0);
+
+    return pclose(pipe);
+}
 void MainFrameImpl::executeCmd(const std::string& filePath, const std::string& profilePath)
 {
     const std::string logalizerPath = getLogalizerPath().string();
     const std::string command = logalizerPath + " -f \"" + filePath + "\" -c \"" + profilePath + "\"";
-    const char* command_str = command.c_str();
-    std::cout << command_str << std::endl;
-    if (const int returnval = system(command_str)) {
-        std::cerr << command << " execution failed with code " << returnval << "\n";
+    std::cout << command << std::endl;
+    std::string output;
+    if (const int returnval = execute(command, output)) {
+        std::cerr << command << " execution failed with code " << returnval << "\n" << output << "\n";
+        wxString message(output);
+        wxMessageBox(message, wxT("Generation failed!"), wxOK | wxICON_ERROR);
     }
 }
 
@@ -104,7 +124,7 @@ void MainFrameImpl::onProfileSelected(wxCommandEvent& event)
 {
     if (m_profileCombo->GetStringSelection() != "Browse...") return;
 
-    wxFileDialog openFileDialog(this, _("Select profile"), "", "", "profile (*.json)|*.json",
+    wxFileDialog openFileDialog(this, _("Select config"), "", "", "config (*.json)|*.json",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if (openFileDialog.ShowModal() == wxID_CANCEL) return;  // the user canceled...
 
