@@ -62,10 +62,11 @@ void MainFrameImpl::onGenerate(wxCommandEvent& event)
     executeCmd(filePath, profilePath);
 }
 
-int MainFrameImpl::execute(const std::string& cmd, std::string& output)
+int MainFrameImpl::execute(std::string cmd, std::string& output)
 {
     const int bufsize = 128;
     std::array<char, bufsize> buffer;
+    cmd += " 2>&1";
 
 #ifdef _WIN32
     auto pipe = _popen(cmd.c_str(), "r");
@@ -87,6 +88,7 @@ int MainFrameImpl::execute(const std::string& cmd, std::string& output)
     return pclose(pipe);
 #endif
 }
+
 void MainFrameImpl::executeCmd(const std::string& filePath, const std::string& profilePath)
 {
     const std::string logalizerPath = getLogalizerPath().string();
