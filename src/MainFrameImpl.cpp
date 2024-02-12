@@ -1,5 +1,4 @@
 #include "MainFrameImpl.h"
-#include <unistd.h>
 #include <wx/arrstr.h>
 #include <wx/busyinfo.h>
 #include <wx/dir.h>
