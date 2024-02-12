@@ -6,8 +6,12 @@
 #include <wx/wx.h>
 #include <wx/wxprec.h>
 #include <array>
+#include <cstdio>
 #include <filesystem>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
 #include "platform/application.h"
 
 namespace fs = std::filesystem;
@@ -57,12 +61,17 @@ void MainFrameImpl::onGenerate(wxCommandEvent& event)
     if (filePath.empty()) wxMessageBox(wxT("Choose input file"));
     executeCmd(filePath, profilePath);
 }
+
 int MainFrameImpl::execute(const std::string& cmd, std::string& output)
 {
     const int bufsize = 128;
     std::array<char, bufsize> buffer;
 
+#ifdef _WIN32
+    auto pipe = _popen(cmd.c_str(), "r");
+#else
     auto pipe = popen(cmd.c_str(), "r");
+#endif
     if (!pipe) throw std::runtime_error("popen() failed!");
 
     size_t count;
@@ -72,7 +81,11 @@ int MainFrameImpl::execute(const std::string& cmd, std::string& output)
         }
     } while (count > 0);
 
+#ifdef _WIN32
+    return _pclose(pipe);
+#else
     return pclose(pipe);
+#endif
 }
 void MainFrameImpl::executeCmd(const std::string& filePath, const std::string& profilePath)
 {
