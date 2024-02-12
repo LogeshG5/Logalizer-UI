@@ -22,7 +22,7 @@ class MainFrameImpl : public MainFrame {
    private:
     std::unordered_map<std::string, std::string> profiles_;
     void executeCmd(const std::string& filePath, const std::string& profilePath);
-    int execute(const std::string& cmd, std::string& output);
+    int execute(std::string cmd, std::string& output);
     void setupDragDrop();
     void appendProfile(const wxString& file);
 };
