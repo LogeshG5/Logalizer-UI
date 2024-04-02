@@ -91,7 +91,7 @@ int MainFrameImpl::execute(std::string cmd, std::string& output)
 
 void MainFrameImpl::executeCmd(const std::string& filePath, const std::string& profilePath)
 {
-    const std::string logalizerPath = getLogalizerPath().string();
+    const std::string logalizerPath = std::string("\"") + getLogalizerPath().string() + std::string("\"");
     const std::string command = logalizerPath + " -f \"" + filePath + "\" -c \"" + profilePath + "\"";
     std::cout << command << std::endl;
     std::string output;
