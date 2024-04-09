@@ -1,3 +1,5 @@
+# Based on https://github.com/lukka/CppCMakeVcpkgTemplate/blob/v11/.github/workflows/hosted-pure-workflow.yml
+# Thanks to Lucca Cappa
 name: Build Logalizer-UI
 on: [push, workflow_dispatch]
 
@@ -21,7 +23,10 @@ jobs:
             archiver: "7za a"
     env:
       # Indicates the location of the vcpkg as a Git submodule of the project repository.
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      # Not using "VCPKG_ROOT" because a variable with the same name is defined in the VS's
+      # Developer Command Prompt environment in VS 2022 17.6, which would override this one 
+      # if it had the same name.
+      _VCPKG_: ${{ github.workspace }}/vcpkg
       # Tells vcpkg where binary packages are stored.
       VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg/bincache
       # Let's use GitHub Action cache as storage for the vcpkg Binary Caching feature.
@@ -30,15 +35,14 @@ jobs:
     steps:
     # Set env vars needed for vcpkg to leverage the GitHub Action cache as a storage
     # for Binary Caching.
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          fetch-depth: 0
+          submodules: true
       - name: "Create directory '${{ env.VCPKG_DEFAULT_BINARY_CACHE }}'"
         run: mkdir -p $VCPKG_DEFAULT_BINARY_CACHE
         shell: bash
@@ -49,17 +53,17 @@ jobs:
       # Restore vcpkg from the GitHub Action cache service. Note that packages are restored by vcpkg's binary caching
       # when it is being run afterwards by CMake.
       - name: Restore vcpkg
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           # The first path is the location of vcpkg: it contains the vcpkg executable and data files, as long as the
           # built package archives (aka binary cache) which are located by VCPKG_DEFAULT_BINARY_CACHE env var.
           # The other paths starting with '!' are exclusions: they contain termporary files generated during the build of the installed packages.
           path: |
-            ${{ env.VCPKG_ROOT }}
-            !${{ env.VCPKG_ROOT }}/buildtrees
-            !${{ env.VCPKG_ROOT }}/packages
-            !${{ env.VCPKG_ROOT }}/downloads
-            !${{ env.VCPKG_ROOT }}/installed
+            ${{ env._VCPKG_ }}
+            !${{ env._VCPKG_ }}/buildtrees
+            !${{ env._VCPKG_ }}/packages
+            !${{ env._VCPKG_ }}/downloads
+            !${{ env._VCPKG_ }}/installed
           # The key is composed in a way that it gets properly invalidated whenever a different version of vcpkg is being used.
           key: |
             ${{ hashFiles( '.git/modules/vcpkg/HEAD' )}}
@@ -99,12 +103,12 @@ jobs:
         working-directory: build/ninja-multi-vcpkg/src/Release
         run: |
           # cpack --config CPackConfig.cmake
-          ${{ matrix.archiver }} ../../logalizer_${{ matrix.os }}.7z .
+          ${{ matrix.archiver }} ../../logalizer-ui_${{ matrix.os }}.7z .
           ls -laR
-          # cp ../logalizer_${{ matrix.os }}.7z .
+          # cp ../logalizer-ui_${{ matrix.os }}.7z .
 
       - name: Upload
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           path: build/ninja-multi-vcpkg/logalizer_${{ matrix.os }}.7z
           name: logalizer_${{ matrix.os }}.7z
@@ -119,4 +123,3 @@ jobs:
           asset_path: ./build/ninja-multi-vcpkg/logalizer_${{ matrix.os }}.7z
           asset_name: logalizer_${{ matrix.os }}.7z
           asset_content_type: application/zip
-
