@@ -1,4 +1,6 @@
 CMakeLists.txt.user
+build
+builds
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -12,3 +14,6 @@ _deps
 
 build
 .cache
+.ccls-cache
+.ccls
+vcpkg_installed
