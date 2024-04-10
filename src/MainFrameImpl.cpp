@@ -69,6 +69,8 @@ int MainFrameImpl::execute(std::string cmd, std::string& output)
     cmd += " 2>&1";
 
 #ifdef _WIN32
+    // workaround for spaces handling in windows https://stackoverflow.com/questions/1557091/how-to-call-popen-with-a-pathname-containing-spaces-under-windows-in-c-c
+    cmd = std::string("\"") + cmd + std::string("\""); 
     auto pipe = _popen(cmd.c_str(), "r");
 #else
     auto pipe = popen(cmd.c_str(), "r");
